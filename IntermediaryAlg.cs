@@ -4,77 +4,62 @@ using UnityEngine;
 
 public class IntermediaryAlg : MonoBehaviour
 {
-    private List<string> popPlan = new List<string>();
-    private Dictionary<string, Vector3> iaPlan = new Dictionary<string, Vector3>();
+    private string[] popPlan;
     private const string CLASSROOM = "Classroom", BATHROOM = "Bathroom",
                          CAFETERIA = "Cafeteria", TABLE = "Table", OUTSIDE = "Outside";
-
+                         // TO-DO add tags for each of these in scene
     public Transform outsideWP, cafeteriaWP;
     public bool covidAware;
     private UnityEngine.AI.NavMeshAgent nav;
     private GameObject[] crowd;
 
+    List<GameObject> visited = new List<GameObject>();
+
     void Start()
     {
         // TO-DO remove this and have POP algorithm call initializeIA()
-        string[] pop = {CLASSROOM, BATHROOM, CAFETERIA, TABLE, OUTSIDE};
-        initializeIA(pop);
+        popPlan = new string[5] {BATHROOM, CLASSROOM, CAFETERIA, TABLE, OUTSIDE};
+        initializeIA(popPlan);
     }
 
-    private void initializeIA(string[] pop) { // string[] pop is received from POP algorithm
+    public void initializeIA(string[] pop) { // string[] pop is received from POP algorithm
         nav = GetComponent<UnityEngine.AI.NavMeshAgent>();
         // TO-DO set Crowd capsules tag to "crowd" in scene
         crowd = GameObject.FindGameObjectsWithTag("Crowd");
-
-        foreach(string name in pop) { // convert pop array to list
-            popPlan.Add(name);
-        }
-
-        foreach(string name in popPlan) { // set a Vector3 for each location
-            Vector3 position = Vector3.zero;
-            switch(name) { // outside and cafeteria have only one location
-                case OUTSIDE:
-                    position = outsideWP.position;
-                    break;
-                case CAFETERIA:
-                    position = cafeteriaWP.position;
-                    break;
-            }
-            iaPlan.Add(name, position);
-        } 
         StartCoroutine(startIA());
     }
 
     private IEnumerator startIA() { // runs in parallel with RL
-        foreach(KeyValuePair<string, Vector3> location in iaPlan) {
-            string name = location.Key;
-            Vector3 position = location.Value;
+        foreach(string location in popPlan) {
+            GameObject closest = pickClosest(location);
+            visited.Add(closest);
 
-            switch(name) {
-                case OUTSIDE:
-                case CAFETERIA:
-                    break; // outside + cafeteria location already set
-                case CLASSROOM:
-                    position = pickLocation(CLASSROOM);
-                    break;
-                case BATHROOM:
-                    position = pickLocation(BATHROOM);
-                    break;
-                case TABLE:
-                    position = pickLocation(TABLE);
-                    break;
-            }
+            // TO-DO send closest.transform.position to RL
+            nav.SetDestination(closest.transform.position);
+            yield return new WaitUntil(() => canSee(closest));
 
-            // TO-DO send location.Value to RL
-            // wait until agent has reached location.Value
-            nav.SetDestination(position);
-            yield return new WaitUntil(hasReached);
-            //print("Destination reached");
+            if (covidAware) StartCoroutine(pickByCrowd(location, closest));
+            yield return new WaitUntil(() => hasReached());
+            // Debug.Log("Destination reached");
         }
         yield return null;
     }
 
-    private bool hasReached() {
+    private bool canSee(GameObject closest) { // determines if agent can "see" its destination
+        RaycastHit hit;
+        Vector3 eyes = new Vector3(transform.position.x, 0.05f, transform.position.z);
+        Ray eyesight = new Ray(eyes, this.transform.forward);
+
+        if(Physics.Raycast(eyesight, out hit, 7f)) {
+            if(hit.collider.name == closest.name && hit.transform.position.x == nav.destination.x
+                                        && hit.transform.position.z == nav.destination.z) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool hasReached() { // determines if agent has reach its destination
         if (!nav.pathPending) { // is a path in the process of being computed?
             if (nav.remainingDistance <= nav.stoppingDistance) // has the agent reached the target?
                 return true;
@@ -82,50 +67,57 @@ public class IntermediaryAlg : MonoBehaviour
         return false;
     }
 
-    private Vector3 pickLocation(string tag) {
-        return covidAware ? pickByCrowd(tag) : pickByDistance(tag);
-    }
-
-    private Vector3 pickByDistance(string tag) {
+    private GameObject pickClosest(string tag) { // picks the closest unvisited location given a tag
         GameObject[] locations = GameObject.FindGameObjectsWithTag(tag);
-        GameObject best = locations[0];
+        GameObject best = null;
         float min = Vector3.Distance(transform.position, locations[0].transform.position);
 
-        foreach(GameObject location in locations) {
+        foreach (GameObject location in locations) { // find an unvisited location as minimum
+            if (!visited.Contains(location)) {
+                best = location;
+                break;
+            }
+        }
+        foreach (GameObject location in locations) { // find the closest unvisited location
             float dist = Vector3.Distance(transform.position, location.transform.position);
-            if(dist < min) {
+            if(dist < min && !visited.Contains(location)) {
                 min = dist;
                 best = location;
             }
-            //print(location + ": " + dist);
         }
-        //print("BEST = " + best);
-        return best.transform.position;
+        return best;
     }
 
-    private Vector3 pickByCrowd(string tag) {
+    private IEnumerator pickByCrowd(string tag, GameObject closest) { // CovidAware decision making
         GameObject[] locations = GameObject.FindGameObjectsWithTag(tag);
-        GameObject best = locations[0];
-        int min = 10000000; // arbitrary large int
 
-        foreach(GameObject location in locations) {
-            CapsuleCollider col = location.GetComponent<CapsuleCollider>();
-            // TO-DO set the radius of each waypoint capsule to 5
-            col.radius = 5;
-            int numPeople = 0;
-
-            foreach(GameObject person in crowd) {
-                if(col.bounds.Contains(person.transform.position)) 
-                    numPeople++;
+        // pick the closest location, evaluate, and loop until out of locations or found 'good' location
+        for (int i = 0; i < locations.Length; i++) { 
+            int numPeople = numInProximity(closest);
+            if (numPeople <= 1) {
+                yield break;
             }
 
-            if(numPeople < min) {
-                min = numPeople;
-                best = location;
-            }
-            //print(location + ": " + numPeople);
+            closest = pickClosest(tag);
+            visited.Add(closest);
+            if (closest == null) continue;
+            // TO-DO send closest.transform.position to RL
+            nav.SetDestination(closest.transform.position);
+            yield return new WaitUntil(() => canSee(closest));
         }
-        //print("BEST = " + best);
-        return best.transform.position;
+        yield break;
+    }    
+
+    private int numInProximity(GameObject sublocation) { // determines the number of people in proximity to a sublocation
+        CapsuleCollider col = sublocation.GetComponent<CapsuleCollider>();
+        col.radius = 3;
+        int numPeople = 0;
+
+        foreach(GameObject person in crowd) {
+            if(col.bounds.Contains(person.transform.position)) 
+                numPeople++;
+        }
+        // Debug.Log(sublocation.name + ": " + numPeople + " people");
+        return numPeople;
     }
 }
