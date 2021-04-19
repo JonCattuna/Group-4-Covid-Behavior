@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class IntermediaryAlg : MonoBehaviour
 {
-    private string[] popPlan;
+    private List<string> popPlan;
     private const string CLASSROOM = "Classroom", BATHROOM = "Bathroom",
                          CAFETERIA = "Cafeteria", TABLE = "Table", OUTSIDE = "Outside";
                          // TO-DO add tags for each of these in scene
@@ -17,12 +17,12 @@ public class IntermediaryAlg : MonoBehaviour
 
     void Start()
     {
-        // TO-DO remove this and have POP algorithm call initializeIA()
-        popPlan = new string[5] {BATHROOM, CLASSROOM, CAFETERIA, TABLE, OUTSIDE};
+        //popPlan = new string[5] {CLASSROOM, BATHROOM, CAFETERIA, TABLE, OUTSIDE};
+        popPlan = POP.popAlgo();
         initializeIA(popPlan);
     }
 
-    public void initializeIA(string[] pop) { // string[] pop is received from POP algorithm
+    public void initializeIA(List<string> pop) { // string[] pop is received from POP algorithm
         nav = GetComponent<UnityEngine.AI.NavMeshAgent>();
         // TO-DO set Crowd capsules tag to "crowd" in scene
         crowd = GameObject.FindGameObjectsWithTag("Crowd");
@@ -35,7 +35,8 @@ public class IntermediaryAlg : MonoBehaviour
             visited.Add(closest);
 
             // TO-DO send closest.transform.position to RL
-            nav.SetDestination(closest.transform.position);
+            nav.SetDestination(closest.transform.position); 
+            // Debug.Log("Next Location: " + closest.name);
             yield return new WaitUntil(() => canSee(closest));
 
             if (covidAware) StartCoroutine(pickByCrowd(location, closest));
@@ -52,7 +53,8 @@ public class IntermediaryAlg : MonoBehaviour
 
         if(Physics.Raycast(eyesight, out hit, 7f)) {
             if(hit.collider.name == closest.name && hit.transform.position.x == nav.destination.x
-                                        && hit.transform.position.z == nav.destination.z) {
+                                    && hit.transform.position.z == nav.destination.z) {
+                // Debug.Log("Can see: " + closest.name);
                 return true;
             }
         }
@@ -70,7 +72,7 @@ public class IntermediaryAlg : MonoBehaviour
     private GameObject pickClosest(string tag) { // picks the closest unvisited location given a tag
         GameObject[] locations = GameObject.FindGameObjectsWithTag(tag);
         GameObject best = null;
-        float min = Vector3.Distance(transform.position, locations[0].transform.position);
+        float min = float.PositiveInfinity;//Vector3.Distance(transform.position, locations[0].transform.position);
 
         foreach (GameObject location in locations) { // find an unvisited location as minimum
             if (!visited.Contains(location)) {
@@ -102,7 +104,8 @@ public class IntermediaryAlg : MonoBehaviour
             visited.Add(closest);
             if (closest == null) continue;
             // TO-DO send closest.transform.position to RL
-            nav.SetDestination(closest.transform.position);
+            nav.SetDestination(closest.transform.position); 
+            // Debug.Log("Next location: " + closest.name);
             yield return new WaitUntil(() => canSee(closest));
         }
         yield break;
