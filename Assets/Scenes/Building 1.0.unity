@@ -119,7 +119,7 @@ NavMeshSettings:
     accuratePlacement: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 1db3721ff95d640689a7a7254e810665, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: fa5e6b44a6609420089be8b74b795e9f, type: 2}
 --- !u!1 &73160795
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 73160797}
   m_Layer: 0
   m_Name: Table (2, 1)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 91570117}
   m_Layer: 0
   m_Name: Table (0, 0)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 342289391}
   m_Layer: 0
   m_Name: Table (1, 1)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -1116,7 +1116,7 @@ GameObject:
   - component: {fileID: 555977175}
   m_Layer: 0
   m_Name: BathroomWP1
-  m_TagString: Untagged
+  m_TagString: Bathroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -1299,7 +1299,7 @@ GameObject:
   - component: {fileID: 614032395}
   m_Layer: 0
   m_Name: ClassroomWP2
-  m_TagString: Untagged
+  m_TagString: Classroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -1407,13 +1407,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 632474960}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dacacd2f0ff9e4e029b7c3709ac859f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 3625043f07f154a34b9658502231bce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   outsideWP: {fileID: 1183376032}
   cafeteriaWP: {fileID: 885812866}
-  classroomWP: {fileID: 817879865}
-  bathroomWP: {fileID: 555977174}
+  covidAware: 0
 --- !u!195 &632474962
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1424,8 +1423,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Speed: 10
+  m_Acceleration: 100
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -1736,7 +1735,7 @@ GameObject:
   - component: {fileID: 788099007}
   m_Layer: 0
   m_Name: Table (2, 0)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -1828,7 +1827,7 @@ GameObject:
   - component: {fileID: 810947064}
   m_Layer: 0
   m_Name: BathroomWP2
-  m_TagString: Untagged
+  m_TagString: Bathroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -2011,7 +2010,7 @@ GameObject:
   - component: {fileID: 815139536}
   m_Layer: 0
   m_Name: Table (3, 1)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -2103,7 +2102,7 @@ GameObject:
   - component: {fileID: 817879866}
   m_Layer: 0
   m_Name: ClassroomWP1
-  m_TagString: Untagged
+  m_TagString: Classroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -2415,7 +2414,7 @@ GameObject:
   - component: {fileID: 885812867}
   m_Layer: 0
   m_Name: CafeteriaWP
-  m_TagString: Untagged
+  m_TagString: Cafeteria
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -2820,7 +2819,7 @@ GameObject:
   - component: {fileID: 1183376033}
   m_Layer: 0
   m_Name: OutsideWP
-  m_TagString: Untagged
+  m_TagString: Outside
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -3003,7 +3002,7 @@ GameObject:
   - component: {fileID: 1318183777}
   m_Layer: 0
   m_Name: Table (1, 0)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -4096,7 +4095,7 @@ GameObject:
   - component: {fileID: 1749802945}
   m_Layer: 0
   m_Name: Table (0, 1)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -4279,7 +4278,7 @@ GameObject:
   - component: {fileID: 1801601814}
   m_Layer: 0
   m_Name: BathroomWP3
-  m_TagString: Untagged
+  m_TagString: Bathroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -4553,7 +4552,7 @@ GameObject:
   - component: {fileID: 1882865069}
   m_Layer: 0
   m_Name: ClassroomWP3
-  m_TagString: Untagged
+  m_TagString: Classroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -4951,7 +4950,7 @@ GameObject:
   - component: {fileID: 1972961408}
   m_Layer: 0
   m_Name: ClassroomWP4
-  m_TagString: Untagged
+  m_TagString: Classroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -5260,7 +5259,7 @@ GameObject:
   - component: {fileID: 2006898347}
   m_Layer: 0
   m_Name: Table (3, 0)
-  m_TagString: Untagged
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -5544,7 +5543,7 @@ GameObject:
   - component: {fileID: 2144271824}
   m_Layer: 0
   m_Name: BathroomWP4
-  m_TagString: Untagged
+  m_TagString: Bathroom
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
