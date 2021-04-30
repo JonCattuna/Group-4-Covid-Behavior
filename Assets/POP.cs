@@ -34,22 +34,22 @@ public static class POP {
         return "No Operator";
     }
 
-    static bool checkForThreats(String operatorToDo, bool handsClean, bool handsDirty, bool gotFood) {
+    static bool checkForThreats(String operatorToDo, bool handsClean, bool handsDirty, bool gotFood,  bool worried) {
         if ((operatorToDo == "Classroom") && (gotFood == false)) {
-            if (handsClean == true) return true;
+            if ((handsClean == true) || (!worried)) return true;
         } else if ((operatorToDo == "Bathroom") && (gotFood == false)) {
-            if (handsDirty == true) return true;
+            if ((handsDirty == true) || (!worried)) return true;
         } else if ((operatorToDo == "Cafeteria") && (gotFood == false)) {
-            if (handsClean == true) return true;
+            if ((handsClean == true) || (!worried)) return true;
         } else if ((operatorToDo == "Table") && (gotFood == true)) {
-            if (handsClean == true) return true;
+            if ((handsClean == true) || (!worried)) return true;
         } else {
             return false;
         }
         return false;
     }
 
-    public static List<String> popAlgo() {
+    public static List<String> popAlgo(bool covidConscious) {
         // Preconditions
         var goToClass = Tuple.Create("Classroom", "handsClean");
         var goToCafeteria = Tuple.Create("Cafeteria", "handsClean");
@@ -83,13 +83,14 @@ public static class POP {
                 string subgoalToDo = selectSubgoal(subgoals, subGoalCounter);
                 //Console.WriteLine(subgoalToDo);
                 string operatorToDo = chooseOperator(subgoalToDo, goToClass, goToCafeteria, goToTable, goToBathroom);
-                bool resolved = checkForThreats(operatorToDo, handsClean, handsDirty, gotFood);
+                bool resolved = checkForThreats(operatorToDo, handsClean, handsDirty, gotFood, covidConscious);
 
                 if (resolved == true) {
                     order.Add(operatorToDo);
                     if (operatorToDo == "Bathroom") {
                         handsClean = true;
                         handsDirty = false;
+                        if (!covidConscious) subgoals.Remove("goToBathroom");
                         visitedBathroom = true;
                     } else if (operatorToDo == "Table") {
                         handsClean = false;
@@ -137,7 +138,7 @@ public static class POP {
 
         var order = new List<string>();
 
-        order = popAlgo();
+        order = popAlgo(false); // false is for covid ignorance, true is for covid awareness
     }
 
 }
