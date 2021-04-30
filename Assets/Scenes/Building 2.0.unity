@@ -3521,7 +3521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outsideWP: {fileID: 1183376032}
   cafeteriaWP: {fileID: 885812866}
-  covidAware: 1
+  covidAware: 0
 --- !u!195 &632474962
 NavMeshAgent:
   m_ObjectHideFlags: 0

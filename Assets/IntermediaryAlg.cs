@@ -7,7 +7,6 @@ public class IntermediaryAlg : MonoBehaviour
     private List<string> popPlan;
     private const string CLASSROOM = "Classroom", BATHROOM = "Bathroom",
                          CAFETERIA = "Cafeteria", TABLE = "Table", OUTSIDE = "Outside";
-                         // TO-DO add tags for each of these in scene
     public Transform outsideWP, cafeteriaWP;
     public bool covidAware;
     private UnityEngine.AI.NavMeshAgent nav;
@@ -18,7 +17,7 @@ public class IntermediaryAlg : MonoBehaviour
     void Start()
     {
         //popPlan = new string[5] {CLASSROOM, BATHROOM, CAFETERIA, TABLE, OUTSIDE};
-        popPlan = POP.popAlgo();
+        popPlan = POP.popAlgo(covidAware);
         initializeIA(popPlan);
     }
 
